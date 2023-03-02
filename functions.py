@@ -39,51 +39,49 @@ def consumption():
 # int       u       upper limit of the supply of bags of chips, and
 # int       l       lower limit of the supply of bags of chips
 def buyChips(s0, T, type, k, alpha, u, l):
-    s = [s0] # supply of bags of chips over time
-    p = [0] # price per unit of bags of chips over time
-    c = [0] # consumption of bags of chips over time
-    b = [0] # belief/average price per unit of bags of chips over time
-    d = [0] # demand for bags of chips over time
-    e = [0] # expenditure/money spent on buying bags of chips over time
+    # Returns the average of an array from index start to end (inclusive)
+    def average_array(arr, start, end):
+        total = 0
 
-    t = 1  # Time variable
+        for i in range(start, end + 1):
+            total += arr[i]
+        
+        return round(total / (end - start + 1), 2) # Might as well round it to 2 decimals
+    
+    s = [0 for i in range(T)] # supply of bags of chips over time
+    p = [0 for i in range(T)] # price per unit of bags of chips over time
+    c = [0 for i in range(T)] # consumption of bags of chips over time
+    b = [0 for i in range(T)] # belief/average price per unit of bags of chips over time
+    d = [0 for i in range(T)] # demand for bags of chips over time
+    e = [0 for i in range(T)] # expenditure/money spent on buying bags of chips over time
 
-    # Returns the average price from the past k time states
-    # Needs work
-    def averagePrice():
-        if type == "exact":
-            total = 0
-
-            # t <= k
-            if t <= k:
-                for i in range(1, t + 1):
-                    total += p[i]
-                
-                total /= t
-            
-            # t > k
-            else:
-                for i in range(t - k + 1, t):
-                    total += p[i]
-                
-                total /= k
-            
-            return total
-        elif type == "approximate":
-
-            # t == 1
-            if t == 1:
-                return b[0] # Returns the first belief state
-            
-            # t <= k
-            elif t <= k:
-                return b[t - 2] + ((p[t - 1] - b[t - 2]) / t)
-            
-            # t > k
-            else:
-                return b[t - 2] + ((p[t - 1] - p[t - k]) / k)
+    for t in range(T):
+        # 1. Update Supply
+        if t == 0:
+            s[0] = s0
         else:
-            print("ERROR - INVALID type VALUE")
-            return -1
+            # Current supply = past supply - consumption + demand
+            s[t] = s[t - 1] - c[t - 1] + d[t - 1]
+        
+        # 2. Update Price
+        p[t] = price() # Random price for p[t]
+    
+        # 3. Update Consumption
+        c[t] = consumption() # Random consumption for c[t]
+
+        # 4. Update Belief/Average price
+        if t < k:
+            b[t] = average_array(p, 0, t)
+        else:
+            b[t] = average_array(p, t - k + 1, t)
+        
+        # 5. Update Demand
+        if p[t] < alpha * b[t]:
+            d[t] = max(u - s[t], 0)
+        else:
+            d[t] = max(l - s[t], 0)
+        
+        # 6. Update Expenditure
+        e[t] = d[t] * p[t]
     
     return s, p, c, b, d, e # Final output lists
