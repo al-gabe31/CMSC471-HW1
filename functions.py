@@ -39,21 +39,28 @@ def consumption():
 # int       u       upper limit of the supply of bags of chips, and
 # int       l       lower limit of the supply of bags of chips
 def buyChips(s0, T, type, k, alpha, u, l):
-    # Returns the average of an array from index start to end (inclusive)
-    def average_array(arr, start, end):
-        total = 0
-
-        for i in range(start, end + 1):
-            total += arr[i]
-        
-        return round(total / (end - start + 1), 2) # Might as well round it to 2 decimals
-    
     s = [0 for i in range(T)] # supply of bags of chips over time
     p = [0 for i in range(T)] # price per unit of bags of chips over time
     c = [0 for i in range(T)] # consumption of bags of chips over time
     b = [0 for i in range(T)] # belief/average price per unit of bags of chips over time
     d = [0 for i in range(T)] # demand for bags of chips over time
     e = [0 for i in range(T)] # expenditure/money spent on buying bags of chips over time
+
+    # Returns the average of prices using the exact method
+    def exact_average(t):
+        total = 0
+        start = -1
+        end = t
+
+        if t < k:
+            start = 0
+        else:
+            start = t - k + 1
+
+        for i in range(start, end + 1):
+            total += p[i]
+
+        return round(total / (end - start + 1), 2) # Might as well round it to 2 decimals
 
     for t in range(T):
         # 1. Update Supply
@@ -70,10 +77,7 @@ def buyChips(s0, T, type, k, alpha, u, l):
         c[t] = consumption() # Random consumption for c[t]
 
         # 4. Update Belief/Average price
-        if t < k:
-            b[t] = average_array(p, 0, t)
-        else:
-            b[t] = average_array(p, t - k + 1, t)
+        b[t] = exact_average(t)
         
         # 5. Update Demand
         if p[t] < alpha * b[t]:
