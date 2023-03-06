@@ -40,11 +40,28 @@ def consumption():
 # int       l       lower limit of the supply of bags of chips
 def buyChips(s0, T, type, k, alpha, u, l):
     # Returns the average of an array from index start to end (inclusive)
-    def average_array(arr, start, end):
-        total = 0
+    # DELETE BELOW ONCE DONE
+    # def exact_average(arr, start, end):
+    #     total = 0
 
+    #     for i in range(start, end + 1):
+    #         total += arr[i]
+        
+    #     return round(total / (end - start + 1), 2) # Might as well round it to 2 decimals
+
+    # Trying to make a better version of exaxct_average
+    def exact_average(price_array, t):
+        total = 0
+        start = -1
+        end = t
+
+        if t < k:
+            start = 0
+        else:
+            start = t - k + 1
+        
         for i in range(start, end + 1):
-            total += arr[i]
+            total += price_array
         
         return round(total / (end - start + 1), 2) # Might as well round it to 2 decimals
     
@@ -70,10 +87,12 @@ def buyChips(s0, T, type, k, alpha, u, l):
         c[t] = consumption() # Random consumption for c[t]
 
         # 4. Update Belief/Average price
-        if t < k:
-            b[t] = average_array(p, 0, t)
-        else:
-            b[t] = average_array(p, t - k + 1, t)
+        # DELETE BELOW ONCE DONE
+        # if t < k:
+        #     b[t] = exact_average(p, 0, t)
+        # else:
+        #     b[t] = exact_average(p, t - k + 1, t)
+        b[t] = exact_average(p, t)
         
         # 5. Update Demand
         if p[t] < alpha * b[t]:
