@@ -61,6 +61,16 @@ def buyChips(s0, T, type, k, alpha, u, l):
             total += p[i]
         
         return round(total / (end - start + 1), 2) # Might as well round it to 2 decimals
+    
+    # Returns the average of prices using the approximate method
+    def approx_average(t):
+        if t == 0:
+            return p[0]
+        else:
+            if t < k:
+                return round(b[t - 1] + ((p[t] - b[t - 1]) / t), 2)
+            else:
+                return round(b[t - 1] + ((p[t] - p[t - k + 1]) / k), 2)
 
     for t in range(T):
         # 1. Update Supply
@@ -77,7 +87,12 @@ def buyChips(s0, T, type, k, alpha, u, l):
         c[t] = consumption() # Random consumption for c[t]
 
         # 4. Update Belief/Average price
-        b[t] = exact_average(t)
+        if type == 'exact':
+            b[t] = exact_average(t)
+        elif type == 'approximate':
+            b[t] = approx_average(t)
+        else:
+            b[t] = -1 # Error Case
         
         # 5. Update Demand
         if p[t] < alpha * b[t]:
