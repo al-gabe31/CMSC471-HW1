@@ -66,11 +66,10 @@ def buyChips(s0, T, type, k, alpha, u, l):
     def approx_average(t):
         if t == 0:
             return p[0]
+        elif t < k:
+            return round(b[t - 1] + ((p[t] - b[t - 1]) / t), 2)
         else:
-            if t < k:
-                return round(b[t - 1] + ((p[t] - b[t - 1]) / t), 2)
-            else:
-                return round(b[t - 1] + ((p[t] - p[t - k + 1]) / k), 2)
+            return round(b[t - 1] + ((p[t] - p[t - k + 1]) / k), 2)
 
     for t in range(T):
         # 1. Update Supply
