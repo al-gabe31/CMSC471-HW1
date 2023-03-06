@@ -56,10 +56,10 @@ def buyChips(s0, T, type, k, alpha, u, l):
             start = 0
         else:
             start = t - k + 1
-
+        
         for i in range(start, end + 1):
             total += p[i]
-
+        
         return round(total / (end - start + 1), 2) # Might as well round it to 2 decimals
 
     for t in range(T):
